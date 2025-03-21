@@ -19,61 +19,50 @@ int main(void) {
 }
 
 int homer_dynamic(int m, int n, int *t) {
-  // Create dynamic programming table
   int max_time = *t;
-  int *dp = (int *)malloc((max_time + 1) * sizeof(int));
-  int *leftover = (int *)malloc((max_time + 1) * sizeof(int));
 
-  // Initialize the base cases
+  int arr[max_time + 1];
+  int remaining[max_time + 1];
+
   for (int i = 0; i <= max_time; i++) {
-    dp[i] = 0;       // No burgers eaten yet
-    leftover[i] = i; // All time is leftover initially
+    arr[i] = 0;
+    remaining[i] = i;
   }
 
-  // Fill the dp table
   for (int time = 1; time <= max_time; time++) {
-    // Can't eat a burger with this time
     if (time < m && time < n) {
-      continue; // Keep the default values
+      continue;
     }
 
-    // Try eating with time m
     if (time >= m) {
       int prev_time = time - m;
-      int burgers_with_m = dp[prev_time] + 1;
-      int leftover_with_m = leftover[prev_time];
+      int burgers_with_m = arr[prev_time] + 1;
+      int remaining_with_m = remaining[prev_time];
 
-      dp[time] = burgers_with_m;
-      leftover[time] = leftover_with_m;
+      arr[time] = burgers_with_m;
+      remaining[time] = remaining_with_m;
     }
 
-    // Try eating with time n
     if (time >= n) {
       int prev_time = time - n;
-      int burgers_with_n = dp[prev_time] + 1;
-      int leftover_with_n = leftover[prev_time];
+      int burgers_with_n = arr[prev_time] + 1;
+      int remaining_with_n = remaining[prev_time];
 
-      // Apply the same logic as in the original code
       int mod_m = time % m;
       int mod_n = time % n;
 
       if (mod_m > mod_n) {
-        dp[time] = burgers_with_n;
-        leftover[time] = leftover_with_n;
+        arr[time] = burgers_with_n;
+        remaining[time] = remaining_with_n;
       } else if (mod_m == mod_n && m >= n) {
-        dp[time] = burgers_with_n;
-        leftover[time] = leftover_with_n;
+        arr[time] = burgers_with_n;
+        remaining[time] = remaining_with_n;
       }
     }
   }
 
-  // Set the result
-  int result = dp[max_time];
-  *t = leftover[max_time];
-
-  // Free memory
-  free(dp);
-  free(leftover);
+  int result = arr[max_time];
+  *t = remaining[max_time];
 
   return result;
 }
