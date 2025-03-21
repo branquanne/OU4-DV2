@@ -2,10 +2,10 @@
 
 struct memo_table {
     int burgers_eaten;
-    int time_left;
+    int t;
 };
 
-int memoization(int n, int m, int time_left, struct memo_table mtable[]);
+int memoization(int n, int m, int t, struct memo_table mtable[]);
 
 int main(void) {
 
@@ -17,13 +17,13 @@ int main(void) {
 
         for (int i = 0; i <= t; i++) {
             memo_table[i].burgers_eaten = -1;
-            memo_table[i].time_left = -1;
+            memo_table[i].t = -1;
         }
 
         memoization(n, m, t, memo_table);
 
-        if (memo_table[t].time_left > 0) {
-            printf("%d %d\n", memo_table[t].burgers_eaten, memo_table[t].time_left);
+        if (memo_table[t].t > 0) {
+            printf("%d %d\n", memo_table[t].burgers_eaten, memo_table[t].t);
         } else {
             printf("%d\n", memo_table[t].burgers_eaten);
         }
@@ -32,38 +32,38 @@ int main(void) {
     return 0;
 }
 
-int memoization(int n, int m, int time_left, struct memo_table mtable[]) {
+int memoization(int n, int m, int t, struct memo_table mtable[]) {
 
-    if (time_left < n && time_left < m) {
-        mtable[time_left].time_left = time_left;
-        mtable[time_left].burgers_eaten = 0;
+    if (t < n && t < m) {
+        mtable[t].t = t;
+        mtable[t].burgers_eaten = 0;
         return 0;
     }
 
-    if (mtable[time_left].burgers_eaten != -1) {
-        return mtable[time_left].burgers_eaten;
+    if (mtable[t].burgers_eaten != -1) {
+        return mtable[t].burgers_eaten;
     }
 
-    int remaining_time_1 = time_left, remaining_time_2 = time_left;
+    int remaining_time_1 = t, remaining_time_2 = t;
     int result_burger_1 = 0, result_burger_2 = 0;
 
-    if (time_left >= n) {
-        result_burger_1 = 1 + memoization(n, m, time_left - n, mtable);
-        remaining_time_1 = mtable[time_left - n].time_left;
+    if (t >= n) {
+        result_burger_1 = 1 + memoization(n, m, t - n, mtable);
+        remaining_time_1 = mtable[t - n].t;
     }
 
-    if (time_left >= m) {
-        result_burger_2 = 1 + memoization(n, m, time_left - m, mtable);
-        remaining_time_2 = mtable[time_left - m].time_left;
+    if (t >= m) {
+        result_burger_2 = 1 + memoization(n, m, t - m, mtable);
+        remaining_time_2 = mtable[t - m].t;
     }
 
     if (remaining_time_1 < remaining_time_2 || (remaining_time_1 == remaining_time_2 && result_burger_1 > result_burger_2)) {
-        mtable[time_left].time_left = remaining_time_1;
-        mtable[time_left].burgers_eaten = result_burger_1;
+        mtable[t].t = remaining_time_1;
+        mtable[t].burgers_eaten = result_burger_1;
     } else {
-        mtable[time_left].time_left = remaining_time_2;
-        mtable[time_left].burgers_eaten = result_burger_2;
+        mtable[t].t = remaining_time_2;
+        mtable[t].burgers_eaten = result_burger_2;
     }
 
-    return mtable[time_left].burgers_eaten;
+    return mtable[t].burgers_eaten;
 }
