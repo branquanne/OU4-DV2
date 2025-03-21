@@ -1,64 +1,79 @@
 #include <stdio.h>
+#include <stdlib.h>
 
-int dynamic(int time_to_eat_burger_1, int time_to_eat_burger_2, int *total_time);
+int homer_dynamic(int m, int n, int *t);
 
-int main(void)
-{
+int main(void) {
+  int m, n, t;
 
-  int time_to_eat_burger_1, time_to_eat_burger_2, total_time, burgers_eaten;
-
-  while (scanf("%d %d %d", &time_to_eat_burger_1, &time_to_eat_burger_2, &total_time) != EOF)
-  {
-
-    burgers_eaten = dynamic(time_to_eat_burger_1, time_to_eat_burger_2, &total_time);
-
-    if (total_time > 0)
-    {
-      printf("%d %d\n", burgers_eaten, total_time);
-    }
-    else
-    {
-      printf("%d\n", burgers_eaten);
+  while (scanf("%d %d %d", &m, &n, &t) != EOF) {
+    int result = homer_dynamic(m, n, &t);
+    if (t == 0) {
+      printf("%d\n", result);
+    } else {
+      printf("%d %d\n", result, t);
     }
   }
 
   return 0;
 }
 
-int dynamic(int time_to_eat_burger_1, int time_to_eat_burger_2, int *total_time)
-{
-  int arr[10000];
-  int tot_burgers = 0;
-  arr[0] = tot_burgers;
+int homer_dynamic(int m, int n, int *t) {
+  // Create dynamic programming table
+  int max_time = *t;
+  int *dp = (int *)malloc((max_time + 1) * sizeof(int));
+  int *leftover = (int *)malloc((max_time + 1) * sizeof(int));
 
-  for (int i = 1; *total_time >= time_to_eat_burger_2 || *total_time >= time_to_eat_burger_1; i++)
-  {
-    if ((*total_time % time_to_eat_burger_2) < (*total_time % time_to_eat_burger_1))
-    {
-      arr[i] = arr[i - 1] + 1;
-      *total_time -= time_to_eat_burger_2;
-    }
-
-    else if ((*total_time % time_to_eat_burger_1) < (*total_time % time_to_eat_burger_2))
-    {
-      arr[i] = arr[i - 1] + 1;
-      *total_time -= time_to_eat_burger_1;
-    }
-
-    else
-    {
-      if (time_to_eat_burger_2 < time_to_eat_burger_1)
-      {
-        arr[i] = arr[i - 1] + 1;
-        *total_time -= time_to_eat_burger_2;
-      }
-      else
-      {
-        arr[i] = arr[i - 1] + 1;
-        *total_time -= time_to_eat_burger_1;
-      }
-    }
-    tot_burgers = arr[i];
+  // Initialize the base cases
+  for (int i = 0; i <= max_time; i++) {
+    dp[i] = 0;       // No burgers eaten yet
+    leftover[i] = i; // All time is leftover initially
   }
-  return tot_burgers;
+
+  // Fill the dp table
+  for (int time = 1; time <= max_time; time++) {
+    // Can't eat a burger with this time
+    if (time < m && time < n) {
+      continue; // Keep the default values
+    }
+
+    // Try eating with time m
+    if (time >= m) {
+      int prev_time = time - m;
+      int burgers_with_m = dp[prev_time] + 1;
+      int leftover_with_m = leftover[prev_time];
+
+      dp[time] = burgers_with_m;
+      leftover[time] = leftover_with_m;
+    }
+
+    // Try eating with time n
+    if (time >= n) {
+      int prev_time = time - n;
+      int burgers_with_n = dp[prev_time] + 1;
+      int leftover_with_n = leftover[prev_time];
+
+      // Apply the same logic as in the original code
+      int mod_m = time % m;
+      int mod_n = time % n;
+
+      if (mod_m > mod_n) {
+        dp[time] = burgers_with_n;
+        leftover[time] = leftover_with_n;
+      } else if (mod_m == mod_n && m >= n) {
+        dp[time] = burgers_with_n;
+        leftover[time] = leftover_with_n;
+      }
+    }
+  }
+
+  // Set the result
+  int result = dp[max_time];
+  *t = leftover[max_time];
+
+  // Free memory
+  free(dp);
+  free(leftover);
+
+  return result;
 }
