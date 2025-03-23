@@ -8,11 +8,9 @@ struct memo_table {
 int memoization(int n, int m, int t, struct memo_table mtable[]);
 
 int main(void) {
-
     int n, m, t;
 
     while (scanf("%d %d %d", &n, &m, &t) != EOF) {
-
         struct memo_table memo_table[t + 1];
 
         for (int i = 0; i <= t; i++) {
@@ -33,7 +31,6 @@ int main(void) {
 }
 
 int memoization(int n, int m, int t, struct memo_table mtable[]) {
-
     if (t < n && t < m) {
         mtable[t].t = t;
         mtable[t].burgers_eaten = 0;
