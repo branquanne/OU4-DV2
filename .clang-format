@@ -1,9 +1,9 @@
-BasedOnStyle: LLVM
+BasedOnStyle: Chromium
 IndentWidth: 4
 TabWidth: 4
 UseTab: Never
 ColumnLimit: 0
-BreakBeforeBraces: Attach
+BreakBeforeBraces: Allman
 AllowShortIfStatementsOnASingleLine: false
 IndentCaseLabels: true
 AccessModifierOffset: -4
